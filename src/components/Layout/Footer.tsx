@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
     <footer className="bg-white border-t border-gray-200">
       <div className="flex items-center justify-between px-2 py-2">
         <div className="text-xs text-gray-500">
-          © {new Date().getFullYear()} Your Company. All rights reserved.
+          © {new Date().getFullYear()} Green Earth Spaces. All rights reserved.
         </div>
         
         <div className="flex items-center space-x-4">
