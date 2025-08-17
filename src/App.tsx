@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginForm from './components/Auth/LoginForm';
 import Sidebar from './components/Layout/Sidebar';
 import Header from './components/Layout/Header';
+import Footer from './components/Layout/Footer';
 import Dashboard from './components/Dashboard/Dashboard';
 import LeadsManager from './components/Leads/LeadsManager';
 import DevelopersManager from './components/Developers/DevelopersManager';
