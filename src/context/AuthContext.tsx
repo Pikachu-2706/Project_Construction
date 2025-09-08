@@ -42,8 +42,8 @@ const initializeMockUsers = () => {
       status: 'active',
     },
     {
-      username: 'prathamesh.tase',
-      email: 'prathamesh.tase@example.com',
+      username: 'prathamesh.tare',
+      email: 'prathamesh.tare@example.com',
       password: 'Green@7581',
       status: 'active',
     },
