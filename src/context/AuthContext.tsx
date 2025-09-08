@@ -13,6 +13,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (emailOrUsername: string, password: string) => Promise<boolean>;
   logout: () => void;
+  error: string | null; // Expose error state
 }
 
 // Create AuthContext with undefined as initial value
@@ -42,8 +43,8 @@ const initializeMockUsers = () => {
       status: 'active',
     },
     {
-      username: 'prathamesh.tare',
-      email: 'prathamesh.tare@example.com',
+      username: 'prathmesh.tare',
+      email: 'prathmesh.tare@example.com',
       password: 'Green@7581',
       status: 'active',
     },
@@ -133,6 +134,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated,
     login,
     logout,
+    error,
   };
 
   return (
