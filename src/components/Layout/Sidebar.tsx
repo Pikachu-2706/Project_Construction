@@ -27,11 +27,11 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
   const adminMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'pending-actions', label: 'Pending Actions', icon: Clock },
-    { id: 'leads', label: 'Lead Tracker', icon: UserCheck },
-    { id: 'developers', label: 'Developer List', icon: HardHat },
-    { id: 'contacts', label: 'Contact List', icon: MessageSquare },
+    { id: 'leads', label: 'Leads', icon: UserCheck },
+    { id: 'developers', label: 'Developers', icon: HardHat },
+    { id: 'contacts', label: 'Contacts', icon: MessageSquare },
     { id: 'projects', label: 'Projects', icon: Building },
-    { id: 'inventory', label: 'Inventory List', icon: Package },
+    { id: 'inventory', label: 'Inventory', icon: Package },
     { id: 'land', label: 'Land', icon: MapPin },
     { id: 'users', label: 'Users', icon: Users },
     { id: 'settings', label: 'Settings', icon: Settings },
@@ -39,11 +39,11 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
 
   const employeeMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'leads', label: 'Lead Tracker', icon: UserCheck },
-    { id: 'developers', label: 'Developer List', icon: HardHat },
-    { id: 'contacts', label: 'Contact List', icon: MessageSquare },
+    { id: 'leads', label: 'Leads', icon: UserCheck },
+    { id: 'developers', label: 'Developers', icon: HardHat },
+    { id: 'contacts', label: 'Contacts', icon: MessageSquare },
     { id: 'projects', label: 'Projects', icon: Building },
-    { id: 'inventory', label: 'Inventory List', icon: Package },
+    { id: 'inventory', label: 'Inventory', icon: Package },
     { id: 'land', label: 'Land', icon: MapPin },
   ];
 
@@ -61,8 +61,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
             />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold">Green Earth Spaces</h1>
-            <p className="text-sm text-gray-500">Project Management</p>
+            <h1 className="text-xl font-bold text-green-700">Green Earth Spaces</h1>
+            <p className="text-sm text-gray-500">CRM System</p>
           </div>
         </div>
       </div>
