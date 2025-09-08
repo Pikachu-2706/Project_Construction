@@ -7,8 +7,8 @@ export const initializeMockData = () => {
       {
         id: '1',
         name: 'Admin User',
-        username: 'admin',
-        password: 'admin123',
+        username: 'clayton.reynolds',
+        password: 'Green@7581',
         email: 'admin@construction.com',
         mobileNo: '9876543210',
         role: 'admin',
@@ -18,8 +18,8 @@ export const initializeMockData = () => {
       {
         id: '2',
         name: 'John Manager',
-        username: 'john',
-        password: 'john123',
+        username: 'prathamesh.tase',
+        password: 'Green@7581',
         email: 'john@construction.com', 
         mobileNo: '9876543211',
         role: 'employee',
@@ -29,8 +29,8 @@ export const initializeMockData = () => {
       {
         id: '3',
         name: 'Sarah Employee',
-        username: 'sarah',
-        password: 'sarah123',
+        username: 'lavinia.reynolds',
+        password: 'Green@7581',
         email: 'sarah@construction.com',
         mobileNo: '9876543212',
         role: 'employee',
