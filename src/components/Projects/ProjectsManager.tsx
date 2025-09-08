@@ -455,7 +455,7 @@ const ProjectsManager: React.FC = () => {
       case 'corporate_building':
         return 'Corporate Building';
       case 'coworking_space':
-        return 'Managed Office';
+        return 'Coworking Space';
       case 'warehouse':
         return 'Warehouse';
       case 'retail_mall':
@@ -528,7 +528,7 @@ const ProjectsManager: React.FC = () => {
         <nav className="flex space-x-4 sm:space-x-8 min-w-max">
           {[
             { id: 'corporate_building', label: 'Corporate Building' },
-            { id: 'coworking_space', label: 'Managed Office' },
+            { id: 'coworking_space', label: 'Coworking Space' },
             { id: 'warehouse', label: 'Warehouse' },
             { id: 'retail_mall', label: 'Retail / Mall' },
           ].map((tab) => (
@@ -787,7 +787,7 @@ const ProjectsManager: React.FC = () => {
               {activeTab === 'coworking_space' && (
                 <>
                   <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-lg border border-orange-200">
-                    <h3 className="text-lg font-semibold text-orange-900 mb-4">Managed Office Details</h3>
+                    <h3 className="text-lg font-semibold text-orange-900 mb-4">Coworking Space Details</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="noOfSeats" className="block text-sm font-medium text-gray-700 mb-2">

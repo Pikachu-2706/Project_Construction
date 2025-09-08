@@ -88,8 +88,8 @@ const Dashboard: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-green-700">
-            {user?.role === 'admin' ? 'CRM Dashboard' : 'My Dashboard'}
+          <h1 className="text-2xl font-bold text-gray-900">
+            {user?.role === 'admin' ? 'Admin Dashboard' : 'My Dashboard'}
           </h1>
           <p className="text-gray-600">
             Welcome back, {user?.name}! Here's what's happening today.
