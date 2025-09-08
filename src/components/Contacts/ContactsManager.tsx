@@ -436,7 +436,7 @@ const ContactsManager: React.FC = () => {
     <div className="space-y-6 p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Contact List</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Contacts Management</h1>
           <p className="text-base text-gray-600">Manage your business contacts across different categories</p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">

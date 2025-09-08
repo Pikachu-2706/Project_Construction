@@ -333,7 +333,7 @@ const LandManager: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <MapPin className="h-6 w-6 text-green-600" />
-            Land Parcels
+            Land Management
           </h1>
           <p className="text-base text-gray-600">Manage land parcels and property documents</p>
         </div>
