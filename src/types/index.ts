@@ -33,7 +33,6 @@ export interface Lead {
   email: string;
   designation: string;
   typeOfPlace: 'Office' | 'Retail' | 'Warehouse' | 'Coworking' | 'Industrial' |'Land'| 'Other';
-  typeOfPlace: 'Office' | 'Retail' | 'Warehouse' | 'Managed Office' | 'Industrial' |'Land'| 'Other';
   spaceRequirement: string;
   transactionType: 'Lease' | 'Sale' | 'Both';
   budget: number;

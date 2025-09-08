@@ -276,7 +276,7 @@ const LeadsManager: React.FC = () => {
     <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Leads Management</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Lead Tracker</h1>
           <p className="text-sm sm:text-base text-gray-600">Manage and track all leads and inquiries</p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
