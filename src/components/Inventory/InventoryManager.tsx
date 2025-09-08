@@ -369,7 +369,7 @@ const InventoryManager: React.FC = () => {
   const getTabLabel = (type: string) => {
     switch (type) {
       case 'corporate_building': return 'Corporate Building';
-      case 'coworking_space': return 'Coworking Space';
+      case 'coworking_space': return 'Managed Office';
       case 'warehouse': return 'Warehouse';
       case 'retail_mall': return 'Retail / Mall';
       default: return type;
@@ -390,7 +390,7 @@ const InventoryManager: React.FC = () => {
     <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Inventory List</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Inventory Management</h1>
           <p className="text-sm sm:text-base text-gray-600">Manage inventory across different property types</p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
@@ -434,7 +434,7 @@ const InventoryManager: React.FC = () => {
         <nav className="flex space-x-4 sm:space-x-8 min-w-max">
           {[
             { id: 'corporate_building', label: 'Corporate Building' },
-            { id: 'coworking_space', label: 'Coworking Space' },
+            { id: 'coworking_space', label: 'Managed Office' },
             { id: 'warehouse', label: 'Warehouse' },
             { id: 'retail_mall', label: 'Retail / Mall' }
           ].map((tab) => (
@@ -659,7 +659,7 @@ const InventoryManager: React.FC = () => {
               {activeTab === 'coworking_space' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    No. of Saleable Seats
+                    No. of Available Seats
                   </label>
                   <input
                     type="number"
