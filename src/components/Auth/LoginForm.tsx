@@ -1,147 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-// Define TypeScript interfaces
-interface User {
-  username: string;
-  email: string;
-  password: string; // In production, passwords should be hashed
-  status: 'active' | 'inactive';
-}
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (emailOrUsername: string, password: string) => Promise<boolean>;
-  logout: () => void;
-}
-
-// Create AuthContext with undefined as initial value
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Custom hook to access AuthContext
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-// Props interface for AuthProvider
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-// Initialize mock users (for testing purposes)
-const initializeMockUsers = () => {
-  const mockUsers: User[] = [
-    {
-      username: 'clayton.reynolds',
-      email: 'clayton.reynolds@example.com',
-      password: 'Green@7581', // In production, use hashed passwords
-      status: 'active',
-    },
-    {
-      username: 'prathmesh.tare',
-      email: 'prathmesh.tare@example.com',
-      password: 'Green@7581',
-      status: 'active',
-    },
-    {
-      username: 'lavinia.reynolds',
-      email: 'lavinia.reynolds@example.com',
-      password: 'Green@7581',
-      status: 'active',
-    },
-  ];
-
-  // Only initialize if users don't already exist in localStorage
-  if (!localStorage.getItem('users')) {
-    localStorage.setItem('users', JSON.stringify(mockUsers));
-  }
-};
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Initialize user state from localStorage on mount
-  useEffect(() => {
-    // Initialize mock users
-    initializeMockUsers();
-
-    try {
-      const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
-        const parsedUser: User = JSON.parse(storedUser);
-        setUser(parsedUser);
-        setIsAuthenticated(true);
-      }
-    } catch (err) {
-      console.error('Failed to load user from localStorage:', err);
-      setError('Failed to initialize authentication state');
-    }
-  }, []);
-
-  // Login function
-  const login = async (emailOrUsername: string, password: string): Promise<boolean> => {
-    try {
-      setError(null); // Clear previous errors
-      const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
-      const foundUser = users.find(
-        (u: User) => (u.email === emailOrUsername || u.username === emailOrUsername) && u.status === 'active'
-      );
-
-      if (!foundUser) {
-        setError('User not found or account is inactive');
-        return false;
-      }
-
-      if (foundUser.password !== password) {
-        setError('Invalid password');
-        return false;
-      }
-
-      setUser(foundUser);
-      setIsAuthenticated(true);
-      localStorage.setItem('currentUser', JSON.stringify(foundUser));
-      return true;
-    } catch (err) {
-      console.error('Login error:', err);
-      setError('An error occurred during login');
-      return false;
-    }
-  };
-
-  // Logout function
-  const logout = () => {
-    try {
-      setUser(null);
-      setIsAuthenticated(false);
-      setError(null);
-      localStorage.removeItem('currentUser');
-    } catch (err) {
-      console.error('Logout error:', err);
-      setError('An error occurred during logout');
-    }
-  };
-
-  // Context value
-  const value: AuthContextType = {
-    user,
-    isAuthenticated,
-    login,
-    logout,
-  };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {error && <div role="alert">{error}</div>}
-      {children}
-    </AuthContext.Provider>
-  );
-}; and loginpage.tsx  import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Building, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -153,24 +10,52 @@ const LoginForm: React.FC = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<{ emailOrUsername?: string; password?: string }>({});
   const { login, error: authError } = useAuth();
   const navigate = useNavigate();
+  const emailInputRef = useRef<HTMLInputElement>(null);
+
+  // Focus on email input on mount
+  useEffect(() => {
+    emailInputRef.current?.focus();
+  }, []);
+
+  // Client-side validation
+  const validateForm = () => {
+    const errors: { emailOrUsername?: string; password?: string } = {};
+    const emailOrUsername = formData.emailOrUsername.trim();
+    const password = formData.password.trim();
+
+    if (!emailOrUsername) {
+      errors.emailOrUsername = 'Email or username is required';
+    } else if (emailOrUsername.includes('@') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailOrUsername)) {
+      errors.emailOrUsername = 'Invalid email format';
+    }
+
+    if (!password) {
+      errors.password = 'Password is required';
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear errors on input change
+    setFormErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    if (!validateForm()) return;
 
+    setLoading(true);
     try {
       const success = await login(formData.emailOrUsername, formData.password);
       if (success) {
-        navigate('/dashboard'); // Redirect to dashboard on successful login
+        navigate('/dashboard');
       }
     } catch (err) {
       console.error('Login error:', err);
@@ -182,6 +67,8 @@ const LoginForm: React.FC = () => {
   // Demo credentials helper
   const setDemoCredentials = (username: string, password: string) => {
     setFormData({ emailOrUsername: username, password });
+    setFormErrors({});
+    emailInputRef.current?.focus();
   };
 
   return (
@@ -197,7 +84,7 @@ const LoginForm: React.FC = () => {
               <p className="text-gray-600 mt-2">CRM System Login</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+            <form onSubmit={handleSubmit} className="space-y-6" noValidate aria-busy={loading}>
               <div>
                 <label htmlFor="emailOrUsername" className="block text-sm font-medium text-gray-700 mb-2">
                   Email or Username
@@ -212,12 +99,21 @@ const LoginForm: React.FC = () => {
                     type="text"
                     value={formData.emailOrUsername}
                     onChange={handleChange}
+                    ref={emailInputRef}
                     required
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className={`block w-full pl-10 pr-3 py-3 border ${
+                      formErrors.emailOrUsername ? 'border-red-500' : 'border-gray-300'
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
                     placeholder="Enter your email or username"
-                    aria-describedby={authError ? 'error-message' : undefined}
+                    aria-describedby={formErrors.emailOrUsername || authError ? 'error-message-email' : undefined}
+                    aria-invalid={!!formErrors.emailOrUsername}
                   />
                 </div>
+                {formErrors.emailOrUsername && (
+                  <p id="error-message-email" className="text-red-600 text-sm mt-1 animate-fade-in">
+                    {formErrors.emailOrUsername}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -235,9 +131,12 @@ const LoginForm: React.FC = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className={`block w-full pl-10 pr-10 py-3 border ${
+                      formErrors.password ? 'border-red-500' : 'border-gray-300'
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
                     placeholder="Enter your password"
-                    aria-describedby={authError ? 'error-message' : undefined}
+                    aria-describedby={formErrors.password || authError ? 'error-message-password' : undefined}
+                    aria-invalid={!!formErrors.password}
                   />
                   <button
                     type="button"
@@ -252,12 +151,17 @@ const LoginForm: React.FC = () => {
                     )}
                   </button>
                 </div>
+                {formErrors.password && (
+                  <p id="error-message-password" className="text-red-600 text-sm mt-1 animate-fade-in">
+                    {formErrors.password}
+                  </p>
+                )}
               </div>
 
               {authError && (
                 <div
-                  id="error-message"
-                  className="text-red-600 text-sm text-center bg-red-50 py-2 px-4 rounded-lg"
+                  id="error-message-server"
+                  className="text-red-600 text-sm text-center bg-red-50 py-2 px-4 rounded-lg animate-fade-in"
                   role="alert"
                 >
                   {authError}
@@ -266,7 +170,7 @@ const LoginForm: React.FC = () => {
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || Object.keys(formErrors).length > 0 || !formData.emailOrUsername || !formData.password}
                 className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {loading ? (
@@ -284,12 +188,12 @@ const LoginForm: React.FC = () => {
                         r="10"
                         stroke="currentColor"
                         strokeWidth="4"
-                      ></circle>
+                      />
                       <path
                         className="opacity-75"
                         fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
+                      />
                     </svg>
                     Signing in...
                   </>
@@ -301,7 +205,7 @@ const LoginForm: React.FC = () => {
           </div>
 
           <div className="bg-gray-50 px-8 py-6">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Login Credentials:</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-3">Demo Credentials:</h3>
             <div className="space-y-2">
               <button
                 type="button"
