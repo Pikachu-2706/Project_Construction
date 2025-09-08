@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 interface User {
   username: string;
   email: string;
-  password: string; // In production, passwords should be hashed
+  password: string; // In production, passwords should be hashed and stored securely
   status: 'active' | 'inactive';
 }
 
@@ -13,7 +13,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (emailOrUsername: string, password: string) => Promise<boolean>;
   logout: () => void;
-  error: string | null; // Expose error state
+  error: string | null;
 }
 
 // Create AuthContext with undefined as initial value
@@ -69,9 +69,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Initialize user state from localStorage on mount
   useEffect(() => {
-    // Initialize mock users
     initializeMockUsers();
-
     try {
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser) {
@@ -81,26 +79,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     } catch (err) {
       console.error('Failed to load user from localStorage:', err);
-      setError('Failed to initialize authentication state');
+      setError('Failed to initialize authentication state. Please try again.');
     }
   }, []);
 
-  // Login function
+  // Login function with input sanitization
   const login = async (emailOrUsername: string, password: string): Promise<boolean> => {
     try {
       setError(null); // Clear previous errors
-      const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
-      const foundUser = users.find(
-        (u: User) => (u.email === emailOrUsername || u.username === emailOrUsername) && u.status === 'active'
-      );
-
-      if (!foundUser) {
-        setError('User not found or account is inactive');
+      // Sanitize inputs
+      const sanitizedEmailOrUsername = emailOrUsername.trim().toLowerCase();
+      const sanitizedPassword = password.trim();
+      if (!sanitizedEmailOrUsername || !sanitizedPassword) {
+        setError('Email/username and password are required.');
         return false;
       }
 
-      if (foundUser.password !== password) {
-        setError('Invalid password');
+      const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
+      const foundUser = users.find(
+        (u: User) =>
+          (u.email.toLowerCase() === sanitizedEmailOrUsername ||
+           u.username.toLowerCase() === sanitizedEmailOrUsername) &&
+          u.status === 'active'
+      );
+
+      if (!foundUser) {
+        setError('User not found or account is inactive.');
+        return false;
+      }
+
+      if (foundUser.password !== sanitizedPassword) {
+        setError('Incorrect password. Please try again.');
         return false;
       }
 
@@ -110,7 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return true;
     } catch (err) {
       console.error('Login error:', err);
-      setError('An error occurred during login');
+      setError('An unexpected error occurred during login. Please try again.');
       return false;
     }
   };
@@ -124,7 +133,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.removeItem('currentUser');
     } catch (err) {
       console.error('Logout error:', err);
-      setError('An error occurred during logout');
+      setError('An unexpected error occurred during logout.');
     }
   };
 
@@ -139,7 +148,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {error && <div role="alert">{error}</div>}
+      {error && (
+        <div role="alert" className="bg-red-100 text-red-700 p-4 rounded-lg text-center">
+          {error}
+        </div>
+      )}
       {children}
     </AuthContext.Provider>
   );
