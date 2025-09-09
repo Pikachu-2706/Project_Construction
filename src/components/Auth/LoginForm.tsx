@@ -10,7 +10,7 @@ const LoginForm: React.FC = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); 
   
   const { login } = useAuth();
 
@@ -29,17 +29,11 @@ const LoginForm: React.FC = () => {
 
     try {
       const success = await login(formData.emailOrUsername, formData.password);
-      if (!success) {
-        setError('Invalid email/username or password');
-      }
-      // Login Credentials:
-      // 👤 Admin: clayton.reynolds
-      // 👤 User: prathamesh.tase
-      // 👤 User: lavinia.reynolds
-      // with password Green@7581 for all
+      
+     
       if (formData.emailOrUsername === 'clayton.reynolds' && formData.password === 'Green@7581') {
         window.location.href = '/admin-dashboard';
-      } else if ((formData.emailOrUsername === 'prathamesh.tase' || formData.emailOrUsername === 'lavinia.reynolds') && formData.password === 'Green@7581') {
+      } else if ((formData.emailOrUsername === 'prathamesh.tare' || formData.emailOrUsername === 'lavinia.reynolds') && formData.password === 'Green@7581') {
         window.location.href = '/employee-dashboard';
       }
     } catch (err) {
