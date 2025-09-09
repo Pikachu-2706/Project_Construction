@@ -30,9 +30,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     // Mock authentication - in real app, this would call an API
     const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const foundUser = users.find((u: User) => u.email === email || u.username === email);
+    const foundUser = users.find((u: User) => 
+      (u.email === email || u.username === email) && u.password === password
+    );
     
-    if (foundUser && foundUser.status === 'active' && foundUser.password === password) {
+    if (foundUser && foundUser.status === 'active') {
       setUser(foundUser);
       setIsAuthenticated(true);
       localStorage.setItem('currentUser', JSON.stringify(foundUser));

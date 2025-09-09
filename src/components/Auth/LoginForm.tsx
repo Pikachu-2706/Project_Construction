@@ -29,7 +29,7 @@ const LoginForm: React.FC = () => {
     try {
       const success = await login(formData.emailOrUsername, formData.password);
       if (!success) {
-        setError('Invalid email/username or password');
+        setError('Invalid username or password. Please check your credentials.');
       }
     } catch (err) {
       setError('Login failed. Please try again.');
@@ -41,6 +41,7 @@ const LoginForm: React.FC = () => {
   // Demo credentials helper
   const setDemoCredentials = (username: string, password: string) => {
     setFormData({ emailOrUsername: username, password: password });
+    setError(''); // Clear any existing errors when setting demo credentials
   };
 
   return (
@@ -134,23 +135,23 @@ const LoginForm: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setDemoCredentials('clayton.reynolds', 'Green@7581')}
-                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
+                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors p-2 hover:bg-green-50 rounded"
               >
-                👤 Admin: clayton.reynolds
+                👤 Admin: clayton.reynolds / Green@7581
               </button>
               <button
                 type="button"
                 onClick={() => setDemoCredentials('prathamesh.tase', 'Green@7581')}
-                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
+                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors p-2 hover:bg-green-50 rounded"
               >
-                👤 User: prathamesh.tase
+                👤 Employee: prathamesh.tase / Green@7581
               </button>
               <button
                 type="button"
                 onClick={() => setDemoCredentials('lavinia.reynolds', 'Green@7581')}
-                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
+                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors p-2 hover:bg-green-50 rounded"
               >
-                👤 User: lavinia.reynolds
+                👤 Employee: lavinia.reynolds / Green@7581
               </button>
             </div>
           </div>
