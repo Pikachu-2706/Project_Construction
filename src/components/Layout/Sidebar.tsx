@@ -57,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
             <img 
               src="https://greenearthspaces.com/wp-content/uploads/2021/07/Final-Logo.png" 
               alt="ConstructCRM Logo" 
-              className="h-36 w-36"
+              className="h-36 w-38"
             />
           </div>
           <div className="text-center">
