@@ -1,38 +1,38 @@
-import React, { useState } from 'react';
-import { Building, Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState } from "react";
+import { Building, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 const LoginForm: React.FC = () => {
   const [formData, setFormData] = useState({
-    emailOrUsername: '',
-    password: ''
+    emailOrUsername: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
-    if (error) setError('');
+    if (error) setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       const success = await login(formData.emailOrUsername, formData.password);
       if (!success) {
-        setError('Invalid email/username or password');
+        setError("Invalid email/username or password");
       }
     } catch (err) {
-      setError('Login failed. Please try again.');
+      setError("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,10 @@ const LoginForm: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="emailOrUsername"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Email or Username
                 </label>
                 <div className="relative">
@@ -72,7 +75,6 @@ const LoginForm: React.FC = () => {
                     value={formData.emailOrUsername}
                     onChange={handleChange}
                     required
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Enter your email or username"
                   />
@@ -80,7 +82,10 @@ const LoginForm: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Password
                 </label>
                 <div className="relative">
@@ -90,11 +95,10 @@ const LoginForm: React.FC = () => {
                   <input
                     id="password"
                     name="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Enter your password"
                   />
@@ -123,7 +127,7 @@ const LoginForm: React.FC = () => {
                 disabled={loading}
                 className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Signing in...' : 'Sign in'}
+                {loading ? "Signing in..." : "Sign in"}
               </button>
             </form>
           </div>
@@ -133,24 +137,31 @@ const LoginForm: React.FC = () => {
             <div className="space-y-2">
               <button
                 type="button"
-                onClick={() => setDemoCredentials('clayton.reynolds', 'Green@7581')}
+                onClick={() => setDemoCredentials("clayton.reynolds", "Green@7581")}
                 className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
                 👤 Admin: clayton.reynolds
               </button>
               <button
                 type="button"
-                onClick={() => setDemoCredentials('prathamesh.tase', 'Green@7581')}
+                onClick={() => setDemoCredentials("prathamesh.tase", "Green@7581")}
                 className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
                 👤 User: prathamesh.tase
               </button>
               <button
                 type="button"
-                onClick={() => setDemoCredentials('lavinia.reynolds', 'Green@7581')}
+                onClick={() => setDemoCredentials("lavinia.reynolds", "Green@7581")}
                 className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
                 👤 User: lavinia.reynolds
+              </button>
+              <button
+                type="button"
+                onClick={() => setDemoCredentials("admin", "admin123")}
+                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
+              >
+                👤 Super Admin: admin
               </button>
             </div>
           </div>
