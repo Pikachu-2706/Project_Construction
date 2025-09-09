@@ -12,32 +12,15 @@ const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   
   const { login } = useAuth();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-    if (error) setError('');
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const success = await login(formData.emailOrUsername, formData.password);
-      if (!success) {
-        setError('Invalid email/username or password');
-      }
-    } catch (err) {
-      setError('Login failed. Please try again.');
-    } finally {
-      setLoading(false);
+…      setLoading(false);
     }
   };
 
+  return (
+    // JSX for the form can be added here
+    <div></div>
+  );
+};
   // Demo credentials helper
   const setDemoCredentials = (username: string, password: string) => {
     setFormData({ emailOrUsername: username, password: password });
