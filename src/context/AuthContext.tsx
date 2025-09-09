@@ -1,3 +1,10 @@
+const initialUsers = [
+  { username: 'clayton.reynolds', email: 'clayton.reynolds@example.com', password: 'green@7581', status: 'active' },
+  { username: 'prathamesh.tape', email: 'prathamesh.tape@example.com', password: 'green@7581', status: 'active' },
+  { username: 'lavinia.reynolds', email: 'lavinia.reynolds@example.com', password: 'green@7581', status: 'active' },
+];
+localStorage.setItem('users', JSON.stringify(initialUsers));
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthContextType } from '../types';
 
