@@ -1,59 +1,63 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, AuthContextType } from '../types';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+
+type User = {
+  username: string;
+  email: string;
+};
+
+type AuthContextType = {
+  user: User | null;
+  login: (usernameOrEmail: string, password: string) => Promise<boolean>;
+  logout: () => void;
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(
+    () => JSON.parse(localStorage.getItem("user") || "null")
+  );
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
+  const login = async (usernameOrEmail: string, password: string): Promise<boolean> => {
+    // ✅ Demo hardcoded credentials
+    const demoUsers = [
+      { username: "clayton.reynolds", email: "clayton.reynolds@example.com", password: "Green@7581" },
+      { username: "prathamesh.tase", email: "prathamesh.tase@example.com", password: "Green@7581" },
+      { username: "lavinia.reynolds", email: "lavinia.reynolds@example.com", password: "Green@7581" },
+      { username: "admin", email: "admin@example.com", password: "admin123" }, // extra fallback
+    ];
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const found = demoUsers.find(
+      u =>
+        (u.username === usernameOrEmail || u.email === usernameOrEmail) &&
+        u.password === password
+    );
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  const login = async (email: string, password: string): Promise<boolean> => {
-    // Mock authentication - in real app, this would call an API
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const foundUser = users.find((u: User) => u.email === email || u.username === email);
-    
-    if (foundUser && foundUser.status === 'active' && foundUser.password === password) {
-      setUser(foundUser);
-      setIsAuthenticated(true);
-      localStorage.setItem('currentUser', JSON.stringify(foundUser));
+    if (found) {
+      const authUser = { username: found.username, email: found.email };
+      setUser(authUser);
+      localStorage.setItem("user", JSON.stringify(authUser));
       return true;
     }
-    
     return false;
   };
 
   const logout = () => {
     setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem("user");
   };
 
-  const value: AuthContextType = {
-    user,
-    login,
-    logout,
-    isAuthenticated,
-  };
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+export const useAuth = (): AuthContextType => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+  return ctx;
 };
