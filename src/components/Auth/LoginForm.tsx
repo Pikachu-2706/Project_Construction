@@ -11,6 +11,7 @@ const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false); 
+  const navigate = useNavigate();
   
   const { login } = useAuth();
 
@@ -32,9 +33,9 @@ const LoginForm: React.FC = () => {
       
      
       if (formData.emailOrUsername === 'clayton.reynolds' && formData.password === 'Green@7581') {
-        window.location.href = '/admin-dashboard';
+        navigate = '/admin-dashboard';
       } else if ((formData.emailOrUsername === 'prathamesh.tare' || formData.emailOrUsername === 'lavinia.reynolds') && formData.password === 'Green@7581') {
-        window.location.href = '/employee-dashboard';
+        navigate = '/employee-dashboard';
       }
     } catch (err) {
       setError('Login failed. Please try again.');
