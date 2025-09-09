@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Edit, Trash2, Eye, FileText, Building, Users, Package, ShoppingBag, Upload, Download } from 'lucide-react';
 import DataTable from '../Common/DataTable';
 import Modal from '../Common/Modal';
@@ -30,7 +31,9 @@ const InventoryManager: React.FC = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
-  const [activeTab, setActiveTab] = useState<'corporate_building' | 'coworking_space' | 'warehouse' | 'retail_mall'>('corporate_building');
+  const [activeTab, setActiveTab] = useState<'corporate_building' | 'managed_office' | 'warehouse' | 'retail_mall'>('corporate_building');
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     type: 'corporate_building' as InventoryItem['type'],
@@ -72,13 +75,42 @@ const InventoryManager: React.FC = () => {
     loadInventory();
   }, []);
 
+  useEffect(() => {
+    // Focus on name input when modal opens
+    if (showModal) {
+      nameInputRef.current?.focus();
+    }
+  }, [showModal]);
+
   const loadInventory = () => {
     const storedInventory: InventoryItem[] = JSON.parse(localStorage.getItem('inventory') || '[]');
     setInventory(storedInventory);
   };
 
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {};
+    if (!formData.name.trim()) errors.name = 'Name is required';
+    if (!formData.developerOwnerName.trim()) errors.developerOwnerName = 'Developer/Owner Name is required';
+    if (!formData.contactNo.trim()) errors.contactNo = 'Contact number is required';
+    if (!formData.emailId.trim()) errors.emailId = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.emailId)) errors.emailId = 'Invalid email format';
+    if (!formData.city.trim()) errors.city = 'City is required';
+    if (!formData.location.trim()) errors.location = 'Location is required';
+    if (!formData.floor.trim()) errors.floor = 'Floor is required';
+    if (!formData.type.trim()) errors.type = 'Type is required';
+    if (!formData.specification.trim()) errors.specification = 'Specification is required';
+    if (!formData.agreementPeriod.trim()) errors.agreementPeriod = 'Agreement period is required';
+    if (!formData.lockInPeriod.trim()) errors.lockInPeriod = 'Lock-in period is required';
+    if (!formData.noOfCarParks.trim()) errors.noOfCarParks = 'Number of car parks is required';
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     const allInventory: InventoryItem[] = JSON.parse(localStorage.getItem('inventory') || '[]');
 
     const inventoryData = {
@@ -141,7 +173,7 @@ const InventoryManager: React.FC = () => {
       emailId: item.emailId,
       city: item.city,
       location: item.location,
-      googleLocation: item.googleLocation,
+      googleLocation: item.googleLocation || '',
       saleableArea: item.saleableArea || '',
       carpetArea: item.carpetArea || '',
       floor: item.floor,
@@ -166,6 +198,7 @@ const InventoryManager: React.FC = () => {
       lockInPeriod: item.lockInPeriod,
       noOfCarParks: item.noOfCarParks.toString()
     });
+    setFormErrors({});
     setShowModal(true);
   };
 
@@ -227,6 +260,7 @@ const InventoryManager: React.FC = () => {
       noOfCarParks: ''
     });
     setEditingItem(null);
+    setFormErrors({});
   };
 
   const handleExport = () => {
@@ -320,7 +354,7 @@ const InventoryManager: React.FC = () => {
       baseColumns.push({ key: 'carpetArea', label: 'Carpet Area', sortable: true });
     }
     
-    if (activeTab === 'coworking_space') {
+    if (activeTab === 'managed_office') {
       baseColumns.push({ key: 'noOfSaleableSeats', label: 'No. of Saleable Seats', sortable: true });
     }
 
@@ -369,7 +403,7 @@ const InventoryManager: React.FC = () => {
   const getTabLabel = (type: string) => {
     switch (type) {
       case 'corporate_building': return 'Corporate Building';
-      case 'coworking_space': return 'Managed Office';
+      case 'managed_office': return 'Managed Office';
       case 'warehouse': return 'Warehouse';
       case 'retail_mall': return 'Retail / Mall';
       default: return type;
@@ -379,7 +413,7 @@ const InventoryManager: React.FC = () => {
   const getTabIcon = (type: string) => {
     switch (type) {
       case 'corporate_building': return <Building className="w-4 h-4" />;
-      case 'coworking_space': return <Users className="w-4 h-4" />;
+      case 'managed_office': return <Users className="w-4 h-4" />;
       case 'warehouse': return <Package className="w-4 h-4" />;
       case 'retail_mall': return <ShoppingBag className="w-4 h-4" />;
       default: return <Building className="w-4 h-4" />;
@@ -397,6 +431,7 @@ const InventoryManager: React.FC = () => {
           <button
             onClick={() => downloadTemplate('inventory')}
             className="inline-flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 transition-colors"
+            aria-label="Download inventory template"
           >
             <FileText className="h-4 w-4" />
             <span>Template</span>
@@ -404,6 +439,7 @@ const InventoryManager: React.FC = () => {
           <button
             onClick={handleImport}
             className="inline-flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700 transition-colors"
+            aria-label="Import inventory from CSV"
           >
             <Upload className="h-4 w-4" />
             <span>Import</span>
@@ -411,6 +447,7 @@ const InventoryManager: React.FC = () => {
           <button
             onClick={handleExport}
             className="inline-flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors"
+            aria-label="Export inventory to CSV"
           >
             <Download className="h-4 w-4" />
             <span>Export</span>
@@ -422,6 +459,7 @@ const InventoryManager: React.FC = () => {
               setShowModal(true);
             }}
             className="inline-flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
+            aria-label={`Add new ${getTabLabel(activeTab)}`}
           >
             <Plus className="h-4 w-4" />
             <span>Add {getTabLabel(activeTab)}</span>
@@ -431,10 +469,10 @@ const InventoryManager: React.FC = () => {
 
       {/* Tabs */}
       <div className="border-b border-gray-200 overflow-x-auto">
-        <nav className="flex space-x-4 sm:space-x-8 min-w-max">
+        <nav className="flex space-x-4 sm:space-x-8 min-w-max" role="tablist">
           {[
             { id: 'corporate_building', label: 'Corporate Building' },
-            { id: 'coworking_space', label: 'Managed Office' },
+            { id: 'managed_office', label: 'Managed Office' },
             { id: 'warehouse', label: 'Warehouse' },
             { id: 'retail_mall', label: 'Retail / Mall' }
           ].map((tab) => (
@@ -446,6 +484,9 @@ const InventoryManager: React.FC = () => {
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              aria-label={`View ${tab.label} inventory`}
             >
               {getTabIcon(tab.id)}
               <span>{tab.label}</span>
@@ -479,27 +520,35 @@ const InventoryManager: React.FC = () => {
         title={editingItem ? `Edit ${getTabLabel(activeTab)}` : `Add ${getTabLabel(activeTab)}`}
         size="xl"
       >
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
             <h3 className="text-lg font-semibold text-blue-900 mb-4">Basic Information</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="name">
                   Name *
                 </label>
                 <input
+                  id="name"
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.name ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  ref={nameInputRef}
+                  aria-invalid={!!formErrors.name}
+                  aria-describedby={formErrors.name ? 'name-error' : undefined}
                 />
+                {formErrors.name && (
+                  <p id="name-error" className="text-red-600 text-sm mt-1">{formErrors.name}</p>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="grade">
                   Grade *
                 </label>
                 <select
+                  id="grade"
                   value={formData.grade}
                   onChange={(e) => setFormData({ ...formData, grade: e.target.value as InventoryItem['grade'] })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
@@ -511,25 +560,32 @@ const InventoryManager: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="developerOwnerName">
                   {activeTab === 'corporate_building' ? 'Corporate Developer / Owner Name' :
-                   activeTab === 'coworking_space' ? 'Coworking Developer / Owner Name' :
+                   activeTab === 'managed_office' ? 'Managed Office Developer / Owner Name' :
                    activeTab === 'warehouse' ? 'Warehouse Developer / Owner Name' :
                    'Developer / Owner Name'} *
                 </label>
                 <input
+                  id="developerOwnerName"
                   type="text"
                   value={formData.developerOwnerName}
                   onChange={(e) => setFormData({ ...formData, developerOwnerName: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.developerOwnerName ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  aria-invalid={!!formErrors.developerOwnerName}
+                  aria-describedby={formErrors.developerOwnerName ? 'developerOwnerName-error' : undefined}
                 />
+                {formErrors.developerOwnerName && (
+                  <p id="developerOwnerName-error" className="text-red-600 text-sm mt-1">{formErrors.developerOwnerName}</p>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="status">
                   Status *
                 </label>
                 <select
+                  id="status"
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value as InventoryItem['status'] })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
@@ -547,22 +603,29 @@ const InventoryManager: React.FC = () => {
             <h3 className="text-lg font-semibold text-green-900 mb-4">Contact Information</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="contactNo">
                   Contact No. *
                 </label>
                 <input
+                  id="contactNo"
                   type="tel"
                   value={formData.contactNo}
                   onChange={(e) => setFormData({ ...formData, contactNo: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.contactNo ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  aria-invalid={!!formErrors.contactNo}
+                  aria-describedby={formErrors.contactNo ? 'contactNo-error' : undefined}
                 />
+                {formErrors.contactNo && (
+                  <p id="contactNo-error" className="text-red-600 text-sm mt-1">{formErrors.contactNo}</p>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="alternateContactNo">
                   Alternate Contact No.
                 </label>
                 <input
+                  id="alternateContactNo"
                   type="tel"
                   value={formData.alternateContactNo}
                   onChange={(e) => setFormData({ ...formData, alternateContactNo: e.target.value })}
@@ -570,16 +633,22 @@ const InventoryManager: React.FC = () => {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="emailId">
                   Email ID *
                 </label>
                 <input
+                  id="emailId"
                   type="email"
                   value={formData.emailId}
                   onChange={(e) => setFormData({ ...formData, emailId: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.emailId ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  aria-invalid={!!formErrors.emailId}
+                  aria-describedby={formErrors.emailId ? 'emailId-error' : undefined}
                 />
+                {formErrors.emailId && (
+                  <p id="emailId-error" className="text-red-600 text-sm mt-1">{formErrors.emailId}</p>
+                )}
               </div>
             </div>
           </div>
@@ -588,34 +657,47 @@ const InventoryManager: React.FC = () => {
             <h3 className="text-lg font-semibold text-purple-900 mb-4">Location Details</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="city">
                   City *
                 </label>
                 <input
+                  id="city"
                   type="text"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.city ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  aria-invalid={!!formErrors.city}
+                  aria-describedby={formErrors.city ? 'city-error' : undefined}
                 />
+                {formErrors.city && (
+                  <p id="city-error" className="text-red-600 text-sm mt-1">{formErrors.city}</p>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="location">
                   Location *
                 </label>
                 <input
+                  id="location"
                   type="text"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.location ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  aria-invalid={!!formErrors.location}
+                  aria-describedby={formErrors.location ? 'location-error' : undefined}
                 />
+                {formErrors.location && (
+                  <p id="location-error" className="text-red-600 text-sm mt-1">{formErrors.location}</p>
+                )}
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="googleLocation">
                   Google Location
                 </label>
                 <input
+                  id="googleLocation"
                   type="url"
                   value={formData.googleLocation}
                   onChange={(e) => setFormData({ ...formData, googleLocation: e.target.value })}
@@ -632,10 +714,11 @@ const InventoryManager: React.FC = () => {
               {(activeTab === 'corporate_building' || activeTab === 'warehouse' || activeTab === 'retail_mall') && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="saleableArea">
                       Saleable Area
                     </label>
                     <input
+                      id="saleableArea"
                       type="text"
                       value={formData.saleableArea}
                       onChange={(e) => setFormData({ ...formData, saleableArea: e.target.value })}
@@ -643,10 +726,11 @@ const InventoryManager: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="carpetArea">
                       Carpet Area
                     </label>
                     <input
+                      id="carpetArea"
                       type="text"
                       value={formData.carpetArea}
                       onChange={(e) => setFormData({ ...formData, carpetArea: e.target.value })}
@@ -656,12 +740,13 @@ const InventoryManager: React.FC = () => {
                 </>
               )}
               
-              {activeTab === 'coworking_space' && (
+              {activeTab === 'managed_office' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="noOfSaleableSeats">
                     No. of Available Seats
                   </label>
                   <input
+                    id="noOfSaleableSeats"
                     type="number"
                     value={formData.noOfSaleableSeats}
                     onChange={(e) => setFormData({ ...formData, noOfSaleableSeats: e.target.value })}
@@ -671,24 +756,31 @@ const InventoryManager: React.FC = () => {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="floor">
                   Floor *
                 </label>
                 <input
+                  id="floor"
                   type="text"
                   value={formData.floor}
                   onChange={(e) => setFormData({ ...formData, floor: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.floor ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  aria-invalid={!!formErrors.floor}
+                  aria-describedby={formErrors.floor ? 'floor-error' : undefined}
                 />
+                {formErrors.floor && (
+                  <p id="floor-error" className="text-red-600 text-sm mt-1">{formErrors.floor}</p>
+                )}
               </div>
 
               {(activeTab === 'corporate_building' || activeTab === 'retail_mall') && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="height">
                     Height
                   </label>
                   <input
+                    id="height"
                     type="text"
                     value={formData.height}
                     onChange={(e) => setFormData({ ...formData, height: e.target.value })}
@@ -700,10 +792,11 @@ const InventoryManager: React.FC = () => {
               {activeTab === 'warehouse' && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="typeOfFlooring">
                       Type of Flooring
                     </label>
                     <input
+                      id="typeOfFlooring"
                       type="text"
                       value={formData.typeOfFlooring}
                       onChange={(e) => setFormData({ ...formData, typeOfFlooring: e.target.value })}
@@ -711,10 +804,11 @@ const InventoryManager: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="flooringSize">
                       Flooring Size
                     </label>
                     <input
+                      id="flooringSize"
                       type="text"
                       value={formData.flooringSize}
                       onChange={(e) => setFormData({ ...formData, flooringSize: e.target.value })}
@@ -722,10 +816,11 @@ const InventoryManager: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="sideHeight">
                       Side Height
                     </label>
                     <input
+                      id="sideHeight"
                       type="text"
                       value={formData.sideHeight}
                       onChange={(e) => setFormData({ ...formData, sideHeight: e.target.value })}
@@ -733,10 +828,11 @@ const InventoryManager: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="centreHeight">
                       Centre Height
                     </label>
                     <input
+                      id="centreHeight"
                       type="text"
                       value={formData.centreHeight}
                       onChange={(e) => setFormData({ ...formData, centreHeight: e.target.value })}
@@ -744,10 +840,11 @@ const InventoryManager: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="canopy">
                       Canopy
                     </label>
                     <input
+                      id="canopy"
                       type="text"
                       value={formData.canopy}
                       onChange={(e) => setFormData({ ...formData, canopy: e.target.value })}
@@ -755,10 +852,11 @@ const InventoryManager: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="fireSprinklers">
                       Fire Sprinklers
                     </label>
                     <input
+                      id="fireSprinklers"
                       type="text"
                       value={formData.fireSprinklers}
                       onChange={(e) => setFormData({ ...formData, fireSprinklers: e.target.value })}
@@ -770,10 +868,11 @@ const InventoryManager: React.FC = () => {
 
               {activeTab === 'retail_mall' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="frontage">
                     Frontage
                   </label>
                   <input
+                    id="frontage"
                     type="text"
                     value={formData.frontage}
                     onChange={(e) => setFormData({ ...formData, frontage: e.target.value })}
@@ -783,10 +882,11 @@ const InventoryManager: React.FC = () => {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="terrace">
                   Terrace
                 </label>
                 <input
+                  id="terrace"
                   type="text"
                   value={formData.terrace}
                   onChange={(e) => setFormData({ ...formData, terrace: e.target.value })}
@@ -795,29 +895,41 @@ const InventoryManager: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="type">
                   Type *
                 </label>
                 <input
+                  id="type"
                   type="text"
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.type ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  aria-invalid={!!formErrors.type}
+                  aria-describedby={formErrors.type ? 'type-error' : undefined}
                 />
+                {formErrors.type && (
+                  <p id="type-error" className="text-red-600 text-sm mt-1">{formErrors.type}</p>
+                )}
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="specification">
                   Specification *
                 </label>
                 <textarea
+                  id="specification"
                   value={formData.specification}
                   onChange={(e) => setFormData({ ...formData, specification: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.specification ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  aria-invalid={!!formErrors.specification}
+                  aria-describedby={formErrors.specification ? 'specification-error' : undefined}
                 />
+                {formErrors.specification && (
+                  <p id="specification-error" className="text-red-600 text-sm mt-1">{formErrors.specification}</p>
+                )}
               </div>
             </div>
           </div>
@@ -826,15 +938,16 @@ const InventoryManager: React.FC = () => {
             <h3 className="text-lg font-semibold text-red-900 mb-4">Pricing & Agreement Details</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {activeTab === 'coworking_space' ? 'Cost Per Seat' : 'Rent Per Sqft'}
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="pricing">
+                  {activeTab === 'managed_office' ? 'Cost Per Seat' : 'Rent Per Sqft'}
                 </label>
                 <input
+                  id="pricing"
                   type="number"
-                  value={activeTab === 'coworking_space' ? formData.costPerSeat : formData.rentPerSqft}
+                  value={activeTab === 'managed_office' ? formData.costPerSeat : formData.rentPerSqft}
                   onChange={(e) => setFormData({ 
                     ...formData, 
-                    ...(activeTab === 'coworking_space' 
+                    ...(activeTab === 'managed_office' 
                       ? { costPerSeat: e.target.value } 
                       : { rentPerSqft: e.target.value })
                   })}
@@ -842,12 +955,13 @@ const InventoryManager: React.FC = () => {
                 />
               </div>
               
-              {activeTab !== 'coworking_space' && (
+              {activeTab !== 'managed_office' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="camPerSqft">
                     CAM Per Sqft
                   </label>
                   <input
+                    id="camPerSqft"
                     type="number"
                     value={formData.camPerSqft}
                     onChange={(e) => setFormData({ ...formData, camPerSqft: e.target.value })}
@@ -856,12 +970,13 @@ const InventoryManager: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 'coworking_space' && (
+              {activeTab === 'managed_office' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="setupFeesInventory">
                     Setup Fees
                   </label>
                   <input
+                    id="setupFeesInventory"
                     type="number"
                     value={formData.setupFeesInventory}
                     onChange={(e) => setFormData({ ...formData, setupFeesInventory: e.target.value })}
@@ -871,42 +986,60 @@ const InventoryManager: React.FC = () => {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="agreementPeriod">
                   Agreement Period *
                 </label>
                 <input
+                  id="agreementPeriod"
                   type="text"
                   value={formData.agreementPeriod}
                   onChange={(e) => setFormData({ ...formData, agreementPeriod: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.agreementPeriod ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  aria-invalid={!!formErrors.agreementPeriod}
+                  aria-describedby={formErrors.agreementPeriod ? 'agreementPeriod-error' : undefined}
                 />
+                {formErrors.agreementPeriod && (
+                  <p id="agreementPeriod-error" className="text-red-600 text-sm mt-1">{formErrors.agreementPeriod}</p>
+                )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="lockInPeriod">
                   Lock-in Period *
                 </label>
                 <input
+                  id="lockInPeriod"
                   type="text"
                   value={formData.lockInPeriod}
                   onChange={(e) => setFormData({ ...formData, lockInPeriod: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.lockInPeriod ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  aria-invalid={!!formErrors.lockInPeriod}
+                  aria-describedby={formErrors.lockInPeriod ? 'lockInPeriod-error' : undefined}
                 />
+                {formErrors.lockInPeriod && (
+                  <p id="lockInPeriod-error" className="text-red-600 text-sm mt-1">{formErrors.lockInPeriod}</p>
+                )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="noOfCarParks">
                   No. of Car Parks *
                 </label>
                 <input
+                  id="noOfCarParks"
                   type="number"
                   value={formData.noOfCarParks}
                   onChange={(e) => setFormData({ ...formData, noOfCarParks: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className={`w-full px-4 py-2 border ${formErrors.noOfCarParks ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm`}
                   required
+                  aria-invalid={!!formErrors.noOfCarParks}
+                  aria-describedby={formErrors.noOfCarParks ? 'noOfCarParks-error' : undefined}
                 />
+                {formErrors.noOfCarParks && (
+                  <p id="noOfCarParks-error" className="text-red-600 text-sm mt-1">{formErrors.noOfCarParks}</p>
+                )}
               </div>
             </div>
           </div>
@@ -919,12 +1052,15 @@ const InventoryManager: React.FC = () => {
                 resetForm();
               }}
               className="px-6 py-3 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+              aria-label="Cancel form"
             >
               Cancel
             </button>
             <button
               type="submit"
               className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 text-sm font-medium shadow-lg hover:shadow-xl"
+              disabled={Object.keys(formErrors).length > 0}
+              aria-label={editingItem ? `Update ${getTabLabel(activeTab)}` : `Create ${getTabLabel(activeTab)}`}
             >
               {editingItem ? `Update ${getTabLabel(activeTab)}` : `Create ${getTabLabel(activeTab)}`}
             </button>
