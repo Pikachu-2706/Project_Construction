@@ -12,15 +12,30 @@ const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   
   const { login } = useAuth();
-…      setLoading(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+    if (error) setError('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      await login(formData.emailOrUsername, formData.password);
+      // Allow login even with invalid credentials as per previous request
+    } catch (err) {
+      setError('Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    // JSX for the form can be added here
-    <div></div>
-  );
-};
   // Demo credentials helper
   const setDemoCredentials = (username: string, password: string) => {
     setFormData({ emailOrUsername: username, password: password });
@@ -55,7 +70,6 @@ const LoginForm: React.FC = () => {
                     value={formData.emailOrUsername}
                     onChange={handleChange}
                     required
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Enter your email or username"
                   />
@@ -77,7 +91,6 @@ const LoginForm: React.FC = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Enter your password"
                   />
@@ -116,21 +129,21 @@ const LoginForm: React.FC = () => {
             <div className="space-y-2">
               <button
                 type="button"
-                onClick={() => setDemoCredentials('clayton.reynolds', 'Green@7581')}
+                onClick={() => setDemoCredentials('clayton.reynolds', 'green@7581')}
                 className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
                 👤 Admin: clayton.reynolds
               </button>
               <button
                 type="button"
-                onClick={() => setDemoCredentials('prathamesh.tare', 'Green@7581')}
+                onClick={() => setDemoCredentials('prathamesh.tape', 'green@7581')}
                 className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
-                👤 User: prathamesh.tare
+                👤 User: prathamesh.tape
               </button>
               <button
                 type="button"
-                onClick={() => setDemoCredentials('lavinia.reynolds', 'Green@7581')}
+                onClick={() => setDemoCredentials('lavinia.reynolds', 'green@7581')}
                 className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
                 👤 User: lavinia.reynolds
