@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Building, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const LoginForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +12,6 @@ const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   
   const { login } = useAuth();
-  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -29,18 +27,9 @@ const LoginForm: React.FC = () => {
     setError('');
 
     try {
-      const { success, role } = await login(formData.emailOrUsername, formData.password);
+      const success = await login(formData.emailOrUsername, formData.password);
       if (!success) {
-        setError('Invalid username or password. Please check your credentials.');
-      } else {
-        // Redirect based on user role
-        if (role === 'admin') {
-          navigate('/admin-dashboard');
-        } else if (role === 'employee') {
-          navigate('/employee-dashboard');
-        } else {
-          setError('Unknown user role. Please contact support.');
-        }
+        setError('Invalid email/username or password');
       }
     } catch (err) {
       setError('Login failed. Please try again.');
@@ -52,7 +41,6 @@ const LoginForm: React.FC = () => {
   // Demo credentials helper
   const setDemoCredentials = (username: string, password: string) => {
     setFormData({ emailOrUsername: username, password: password });
-    setError(''); // Clear any existing errors when setting demo credentials
   };
 
   return (
@@ -84,6 +72,7 @@ const LoginForm: React.FC = () => {
                     value={formData.emailOrUsername}
                     onChange={handleChange}
                     required
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Enter your email or username"
                   />
@@ -105,6 +94,7 @@ const LoginForm: React.FC = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
+                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Enter your password"
                   />
@@ -144,23 +134,23 @@ const LoginForm: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setDemoCredentials('clayton.reynolds', 'Green@7581')}
-                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors p-2 hover:bg-green-50 rounded"
+                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
-                👤 Admin: clayton.reynolds / Green@7581
+                👤 Admin: clayton.reynolds
               </button>
               <button
                 type="button"
-                onClick={() => setDemoCredentials('prathamesh.tare', 'Green@7581')}
-                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors p-2 hover:bg-green-50 rounded"
+                onClick={() => setDemoCredentials('prathamesh.tase', 'Green@7581')}
+                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
-                👤 Employee: prathamesh.tare / Green@7581
+                👤 User: prathamesh.tase
               </button>
               <button
                 type="button"
                 onClick={() => setDemoCredentials('lavinia.reynolds', 'Green@7581')}
-                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors p-2 hover:bg-green-50 rounded"
+                className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
-                👤 Employee: lavinia.reynolds / Green@7581
+                👤 User: lavinia.reynolds
               </button>
             </div>
           </div>
