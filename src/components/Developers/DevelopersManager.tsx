@@ -250,10 +250,10 @@ const DevelopersManager: React.FC = () => {
 
   const getTabLabel = (type: string) => {
     switch (type) {
-      case 'corporate': return 'Corporate Developers';
-      case 'coworking': return 'Coworking Developers';
-      case 'warehouse': return 'Warehouse Developers';
-      case 'mall': return 'Mall Developers';
+      case 'corporate': return 'Corporate Developer List';
+      case 'coworking': return 'Coworking Developer List';
+      case 'warehouse': return 'Warehouse Developer List';
+      case 'mall': return 'Mall Developer List';
       default: return type;
     }
   };
@@ -272,7 +272,7 @@ const DevelopersManager: React.FC = () => {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Developers Management</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Developers List</h1>
           <p className="text-sm text-gray-600">Manage developers across different property types</p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -310,10 +310,10 @@ const DevelopersManager: React.FC = () => {
       <div className="border-b border-gray-200 overflow-x-auto">
         <nav className="flex space-x-8 min-w-max">
           {[
-            { id: 'corporate', label: 'Corporate Developers' },
-            { id: 'coworking', label: 'Coworking Developers' },
-            { id: 'warehouse', label: 'Warehouse Developers' },
-            { id: 'mall', label: 'Mall Developers' }
+            { id: 'corporate', label: 'Corporate Developer List' },
+            { id: 'coworking', label: 'Coworking Developer List' },
+            { id: 'warehouse', label: 'Warehouse Developer List' },
+            { id: 'mall', label: 'Mall Developer List' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -544,7 +544,7 @@ const DevelopersManager: React.FC = () => {
                 </div>
               )}
               <div>
-                <label htmlFor="buildingListLink" className="block text-sm font-medium text-gray-700 mb-2">Link to List of {activeTab === 'corporate' ? 'Buildings' : activeTab === 'coworking' ? 'Managed Offices' : activeTab === 'warehouse' ? 'Warehouses' : 'Malls'}</label>
+                <label htmlFor="buildingListLink" className="block text-sm font-medium text-gray-700 mb-2">Link to List of {activeTab === 'corporate' ? 'Buildings' : activeTab === 'coworking' ? 'Coworking Spaces' : activeTab === 'warehouse' ? 'Warehouses' : 'Malls'}</label>
                 <input
                   id="buildingListLink"
                   type="url"
@@ -660,7 +660,7 @@ const DevelopersManager: React.FC = () => {
                 )}
                 {selectedItem.noOfCoworking && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-500">No. of Managed Offices</label>
+                    <label className="block text-sm font-medium text-gray-500">No. of Coworking Spaces</label>
                     <p className="text-sm text-gray-900">{selectedItem.noOfCoworking}</p>
                   </div>
                 )}
@@ -677,7 +677,7 @@ const DevelopersManager: React.FC = () => {
                   </div>
                 )}
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">Link to List of {activeTab === 'corporate' ? 'Buildings' : activeTab === 'coworking' ? 'Managed Offices' : activeTab === 'warehouse' ? 'Warehouses' : 'Malls'}</label>
+                  <label className="block text-sm font-medium text-gray-500">Link to List of {activeTab === 'corporate' ? 'Buildings' : activeTab === 'coworking' ? 'Coworking Spaces' : activeTab === 'warehouse' ? 'Warehouses' : 'Malls'}</label>
                   {selectedItem.buildingListLink ? (
                     <a href={selectedItem.buildingListLink} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">{selectedItem.buildingListLink}</a>
                   ) : (

@@ -20,18 +20,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Initialize mock users if not present in localStorage
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    if (users.length === 0) {
-      const mockUsers = [
-        { username: 'clayton.reynolds', email: 'clayton@example.com', password: 'Green@7581', status: 'active', role: 'admin' },
-        { username: 'prathamesh.tare', email: 'prathamesh@example.com', password: 'Green@7581', status: 'active', role: 'employee' },
-        { username: 'lavinia.reynolds', email: 'lavinia@example.com', password: 'Green@7581', status: 'active', role: 'employee' },
-      ];
-      localStorage.setItem('users', JSON.stringify(mockUsers));
-    }
-
-    // Check for stored user
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -39,20 +27,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  const login = async (emailOrUsername: string, password: string): Promise<{ success: boolean; role?: string }> => {
+  const login = async (email: string, password: string): Promise<boolean> => {
+    // Mock authentication - in real app, this would call an API
     const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const foundUser = users.find((u: User) => 
-      (u.email === emailOrUsername || u.username === emailOrUsername) && u.password === password
-    );
+    const foundUser = users.find((u: User) => u.email === email);
     
     if (foundUser && foundUser.status === 'active') {
+      // In a real app, you'd verify the password hash
       setUser(foundUser);
       setIsAuthenticated(true);
       localStorage.setItem('currentUser', JSON.stringify(foundUser));
-      return { success: true, role: foundUser.role };
+      return true;
     }
     
-    return { success: false };
+    return false;
   };
 
   const logout = () => {
