@@ -57,12 +57,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
             <img 
               src="https://greenearthspaces.com/wp-content/uploads/2021/07/Final-Logo.png" 
               alt="ConstructCRM Logo" 
-              className="h-32 w-36"
+              className="h-38 w-38"
             />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-green-700">Green Earth Spaces</h1>
-            <p className="text-sm text-gray-500">CRM System</p>
+            <h1 className="text-xl font-bold text-green-700">EDGE</h1>
+            <p className="text-sm text-gray-500">Sharper Insights, Smarter Space</p>
           </div>
         </div>
       </div>
@@ -77,7 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
                   onClick={() => setActiveTab(item.id)}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
                     activeTab === item.id
-                      ? 'bg-blue-200 text-gray-900'
+                      ? 'bg-white-200 text-gray-900'
                       : 'text-gray-700 hover:bg-blue-100 hover:text-gray-900'
                   }`}
                 >
