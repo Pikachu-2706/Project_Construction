@@ -27,7 +27,10 @@ const LoginForm: React.FC = () => {
     setLoading(true);
     setError('');
 
-    
+    try {
+      const success = await login(formData.emailOrUsername, formData.password);
+      
+      }
      
       if (formData.emailOrUsername === 'clayton.reynolds' && formData.password === 'Green@7581') {
         window.location.href = '/admin-dashboard';
