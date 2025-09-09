@@ -17,8 +17,8 @@ export const initializeMockData = () => {
       },
       {
         id: '2',
-        name: 'Prathamesh Tase',
-        username: 'prathamesh.tase',
+        name: 'Prathamesh Tare',
+        username: 'prathamesh.tare',
         password: 'Green@7581',
         email: 'prathamesh@construction.com', 
         mobileNo: '9876543211',
