@@ -141,10 +141,10 @@ const LoginForm: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setDemoCredentials('prathamesh.tase', 'Green@7581')}
+                onClick={() => setDemoCredentials('prathamesh.tare', 'Green@7581')}
                 className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors p-2 hover:bg-green-50 rounded"
               >
-                👤 Employee: prathamesh.tase / Green@7581
+                👤 Employee: prathamesh.tare / Green@7581
               </button>
               <button
                 type="button"
