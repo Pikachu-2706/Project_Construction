@@ -251,7 +251,7 @@ const DevelopersManager: React.FC = () => {
   const getTabLabel = (type: string) => {
     switch (type) {
       case 'corporate': return 'Corporate Developers';
-      case 'coworking': return 'Managed Office Developers';
+      case 'coworking': return 'Coworking Developers';
       case 'warehouse': return 'Warehouse Developers';
       case 'mall': return 'Mall Developers';
       default: return type;
@@ -311,7 +311,7 @@ const DevelopersManager: React.FC = () => {
         <nav className="flex space-x-8 min-w-max">
           {[
             { id: 'corporate', label: 'Corporate Developers' },
-            { id: 'coworking', label: 'Managed Office Developers' },
+            { id: 'coworking', label: 'Coworking Developers' },
             { id: 'warehouse', label: 'Warehouse Developers' },
             { id: 'mall', label: 'Mall Developers' }
           ].map(tab => (
@@ -497,7 +497,7 @@ const DevelopersManager: React.FC = () => {
               )}
               {activeTab === 'coworking' && (
                 <div>
-                  <label htmlFor="noOfCoworking" className="block text-sm font-medium text-gray-700 mb-2">No. of Managed Offices *</label>
+                  <label htmlFor="noOfCoworking" className="block text-sm font-medium text-gray-700 mb-2">No. of Coworking Spaces *</label>
                   <input
                     id="noOfCoworking"
                     type="number"
