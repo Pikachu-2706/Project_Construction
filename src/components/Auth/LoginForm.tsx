@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Building, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
+
 const LoginForm: React.FC = () => {
   const [formData, setFormData] = useState({
     emailOrUsername: '',
@@ -31,6 +32,16 @@ const LoginForm: React.FC = () => {
       if (!success) {
         setError('Invalid email/username or password');
       }
+      // Login Credentials:
+      // 👤 Admin: clayton.reynolds
+      // 👤 User: prathamesh.tase
+      // 👤 User: lavinia.reynolds
+      // with password Green@7581 for all
+      if (formData.emailOrUsername === 'clayton.reynolds' && formData.password === 'Green@7581') {
+        window.location.href = '/admin-dashboard';
+      } else if ((formData.emailOrUsername === 'prathamesh.tase' || formData.emailOrUsername === 'lavinia.reynolds') && formData.password === 'Green@7581') {
+        window.location.href = '/employee-dashboard';
+      }
     } catch (err) {
       setError('Login failed. Please try again.');
     } finally {
@@ -38,6 +49,7 @@ const LoginForm: React.FC = () => {
     }
   };
 
+  
   // Demo credentials helper
   const setDemoCredentials = (username: string, password: string) => {
     setFormData({ emailOrUsername: username, password: password });
