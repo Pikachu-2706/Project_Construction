@@ -61,8 +61,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
             />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-green-700">Green Earth Spaces</h1>
-            <p className="text-sm text-gray-500">CRM System</p>
+            <h1 className="text-xl font-bold text-green-700">EDGE</h1>
+            <p className="text-sm text-gray-500">Sharper Insights, Smarter Space</p>
           </div>
         </div>
       </div>
