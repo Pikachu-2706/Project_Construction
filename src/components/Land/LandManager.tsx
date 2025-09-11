@@ -332,7 +332,7 @@ const LandManager: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <MapPin className="h-6 w-6 text-green-600" />
+            
             Land Management
           </h1>
           <p className="text-base text-gray-600">Manage land parcels and property documents</p>
