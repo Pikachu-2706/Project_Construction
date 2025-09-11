@@ -30,15 +30,13 @@ const LoginForm: React.FC = () => {
     try {
       const success = await login(formData.emailOrUsername, formData.password);
       
+      if (!success) {
+        setError('Invalid username or password. Please check your credentials.');
       }
-     
-      if (formData.emailOrUsername === 'clayton.reynolds' && formData.password === 'Green@7581') {
-        window.location.href = '/admin-dashboard';
-      } else if ((formData.emailOrUsername === 'prathamesh.tare' || formData.emailOrUsername === 'lavinia.reynolds') && formData.password === 'Green@7581') {
-        window.location.href = '/employee-dashboard';
-      }
+      // Login success is handled by the AuthContext and App component
     } catch (err) {
-      setError('Login failed. Please try again.');
+      console.error('Login error:', err);
+      setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -147,17 +145,17 @@ const LoginForm: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setDemoCredentials('prathamesh.tase', 'Green@7581')}
+                onClick={() => setDemoCredentials('prathamesh.tare', 'Green@7581')}
                 className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
-                👤 User: prathamesh.tase
+                👤 Employee: prathamesh.tare
               </button>
               <button
                 type="button"
                 onClick={() => setDemoCredentials('lavinia.reynolds', 'Green@7581')}
                 className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
-                👤 User: lavinia.reynolds
+                👤 Employee: lavinia.reynolds
               </button>
             </div>
           </div>
