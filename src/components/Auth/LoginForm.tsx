@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Building, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+
 
 const LoginForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -11,9 +11,8 @@ const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
+  
   const { login } = useAuth();
-  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -30,25 +29,23 @@ const LoginForm: React.FC = () => {
 
     try {
       const success = await login(formData.emailOrUsername, formData.password);
-
       if (!success) {
-        setError('Invalid username or password. Please check your credentials.');
-      } else {
-        // ✅ Redirect based on user
-        if (formData.emailOrUsername === 'clayton.reynolds') {
-          navigate('/admin-dashboard');
-        } else {
-          navigate('/employee-dashboard');
-        }
+        setError('Invalid email/username or password');
+      }
+     
+      if (formData.emailOrUsername === 'clayton.reynolds' && formData.password === 'Green@7581') {
+        window.location.href = '/admin-dashboard';
+      } else if ((formData.emailOrUsername === 'prathamesh.tare' || formData.emailOrUsername === 'lavinia.reynolds') && formData.password === 'Green@7581') {
+        window.location.href = '/employee-dashboard';
       }
     } catch (err) {
-      console.error('Login error:', err);
-      setError('Something went wrong. Please try again.');
+      setError('Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  
   // Demo credentials helper
   const setDemoCredentials = (username: string, password: string) => {
     setFormData({ emailOrUsername: username, password: password });
@@ -83,6 +80,7 @@ const LoginForm: React.FC = () => {
                     value={formData.emailOrUsername}
                     onChange={handleChange}
                     required
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Enter your email or username"
                   />
@@ -104,6 +102,7 @@ const LoginForm: React.FC = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
+                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Enter your password"
                   />
@@ -152,14 +151,14 @@ const LoginForm: React.FC = () => {
                 onClick={() => setDemoCredentials('prathamesh.tase', 'Green@7581')}
                 className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
-                👤 Employee: prathamesh.tase
+                👤 User: prathamesh.tase
               </button>
               <button
                 type="button"
                 onClick={() => setDemoCredentials('lavinia.reynolds', 'Green@7581')}
                 className="w-full text-left text-sm text-green-600 hover:text-green-800 transition-colors"
               >
-                👤 Employee: lavinia.reynolds
+                👤 User: lavinia.reynolds
               </button>
             </div>
           </div>
