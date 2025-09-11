@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
       // Filter data based on user role
       const filteredLeads = user?.role === 'admin' 
         ? leads 
-        : leads.filter(lead => lead.leadManager === user?.id);
+        : leads.filter(lead => lead.leadManagedBy === user?.id);
 
       // Calculate basic stats
       const totalLeads = filteredLeads.length;
