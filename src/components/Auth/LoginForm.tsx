@@ -63,7 +63,7 @@ const LoginForm: React.FC = () => {
               <img 
               src="https://greenearthspaces.com/wp-content/uploads/2021/07/Final-Logo.png" 
               alt="ConstructCRM Logo" 
-              className="h-32 w-32"
+              className="h-38 w-38"
             />
               <h1 className="text-2xl font-bold text-green-700">EDGE</h1>
               <p className="text-gray-600 mt-2">CRM System Login</p>
