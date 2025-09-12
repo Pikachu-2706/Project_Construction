@@ -57,7 +57,12 @@ const LoginForm: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           <div className="px-8 pt-8 pb-6">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 rounded-full mb-4">
+            <img 
+              src="https://greenearthspaces.com/wp-content/uploads/2021/07/Final-Logo.png" 
+              alt="ConstructCRM Logo" 
+              className="h-38 w-38"
+            />
+          </div>
                 <Building className="h-8 w-8 text-white" />
               </div>
               <h1 className="text-2xl font-bold text-green-700">Green Earth Spaces</h1>
