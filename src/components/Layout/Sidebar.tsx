@@ -50,7 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
   const menuItems = user?.role === 'admin' ? adminMenuItems : employeeMenuItems;
 
   return (
-    <div className="bg-blue-50 text-gray-900 w-64 min-h-screen flex flex-col">
+    <div className="bg-white text-gray-900 w-64 min-h-screen flex flex-col">
       <div className="p-6 border-b border-blue-100">
         <div className="flex flex-col items-center space-y-3">
           <div className="p-4 rounded-lg">
@@ -77,8 +77,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
                   onClick={() => setActiveTab(item.id)}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
                     activeTab === item.id
-                      ? 'bg-white-200 text-gray-900'
-                      : 'text-gray-700 hover:bg-blue-100 hover:text-gray-900'
+                      ? 'bg-gray-100 text-gray-900'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                   }`}
                 >
                   <IconComponent className="h-5 w-5" />
@@ -102,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
         </div>
         <button
           onClick={logout}
-          className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-100 hover:text-gray-900 rounded-lg transition-colors"
+          className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors"
         >
           <LogOut className="h-4 w-4" />
           <span>Logout</span>
