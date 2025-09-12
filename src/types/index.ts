@@ -31,23 +31,24 @@ export interface Lead {
   contactPerson: string;
   contactNo: string;
   email: string;
-  designation: string;
-  typeOfPlace: 'Office' | 'Retail' | 'Warehouse' | 'Coworking' | 'Industrial' |'Land'| 'Other';
+  designation?: string;
+  department?: string;
+  description?: string;
   typeOfPlace: 'Office' | 'Retail' | 'Warehouse' | 'Managed Office' | 'Industrial' |'Land'| 'Other';
-  spaceRequirement: string;
+  spaceRequirement?: string;
   transactionType: 'Lease' | 'Sale' | 'Both';
-  budget: number;
-  city: string;
-  locationPreference: string;
-  firstContactDate: string;
+  budget?: number;
+  city?: string;
+  locationPreference?: string;
+  firstContactDate?: string;
   leadManagedBy: string;
   leadManagerName?: string;
   status: 'New' | 'In Progress' | 'Qualified' | 'Closed Won' | 'Closed Lost' | 'Follow Up';
   optionShared: 'Yes' | 'No';
-  lastContactDate: string;
-  nextActionPlan: string;
-  actionDate: string;
-  remark: string;
+  lastContactDate?: string;
+  nextActionPlan?: string;
+  actionDate?: string;
+  remark?: string;
   createdAt: string;
 }
 
@@ -71,23 +72,32 @@ export interface Developer {
 
 export interface Contact {
   id: string;
-  category: 'client' | 'developer' | 'individual_owner';
+  type: ContactType;
   companyName?: string;
-  developerName?: string;
-  individualOwnerName?: string;
   industry?: string;
-  type?: string;
-  contactPerson: string;
-  designation?: string;
+  department?: string;
+  developerName?: string;
+  contactType?: string;
+  individualOwnerName?: string;
+  ownerType?: string;
   departmentDesignation?: string;
-  contactNo: string;
+  firstName?: string;
+  lastName?: string;
+  designation?: string;
+  contactNo?: string;
   alternateNo?: string;
-  emailId: string;
-  linkedInLink: string;
-  city: string;
-  location: string;
+  emailId?: string;
+  linkedinLink?: string;
+  city?: string;
+  location?: string;
+  brokerName?: string;
+  locationCovered?: string;
+  remark?: string;
+  requirements?: string;
   createdAt: string;
 }
+
+export type ContactType = 'Client' | 'Developer' | 'Individual Owner' | 'Broker' | 'Others';
 
 export interface InventoryItem {
   id: string;

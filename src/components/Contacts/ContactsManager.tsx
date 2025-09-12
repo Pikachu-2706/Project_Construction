@@ -5,6 +5,7 @@ import DataTable from '../Common/DataTable';
 import Modal from '../Common/Modal';
 import { exportToCSV, downloadTemplate } from '../../utils/exportUtils';
 import { Plus, Upload, Download, Building2, Users, User, UserCheck, FileText, Edit, Trash2, Eye } from 'lucide-react';
+import Papa from 'papaparse';
 
 // Strongly typed user interface
 interface EmployeeUser {
