@@ -26,10 +26,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const users: User[] = [
           {
             id: '1',
-            name: 'Admin User',
+            name: 'Clayton Reynolds',
             username: 'clayton.reynolds',
             password: 'Green@7581',
-            email: 'admin@construction.com',
+            email: 'clayton@greenearthspaces.com',
             mobileNo: '9876543210',
             role: 'admin',
             status: 'active',
@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             name: 'Prathmesh Tare',
             username: 'prathmesh.tare',
             password: 'Green@7581',
-            email: 'prathmesh@construction.com', 
+            email: 'prathmesh@greenearthspaces.com', 
             mobileNo: '9876543211',
             role: 'employee',
             status: 'active',
@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             name: 'Lavinia Reynolds',
             username: 'lavinia.reynolds',
             password: 'Green@7581',
-            email: 'lavinia@construction.com',
+            email: 'lavinia@greenearthspaces.com',
             mobileNo: '9876543212',
             role: 'employee',
             status: 'active',
@@ -59,6 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           },
         ];
         localStorage.setItem('users', JSON.stringify(users));
+        console.log('Users initialized in AuthContext:', users); // Debug log
       }
     };
 
@@ -74,10 +75,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
+      console.log('Login attempt:', { username, password }); // Debug log
       const users = JSON.parse(localStorage.getItem('users') || '[]');
+      console.log('Available users:', users); // Debug log
       const foundUser = users.find((u: User) => 
         u.username === username && u.password === password && u.status === 'active'
       );
+      console.log('Found user:', foundUser); // Debug log
 
       if (foundUser) {
         setUser(foundUser);

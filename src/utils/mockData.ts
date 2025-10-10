@@ -6,10 +6,10 @@ export const initializeMockData = () => {
     const users: User[] = [
       {
         id: '1',
-        name: 'Admin User',
+        name: 'Clayton Reynolds',
         username: 'clayton.reynolds',
         password: 'Green@7581',
-        email: 'admin@construction.com',
+        email: 'clayton@greenearthspaces.com',
         mobileNo: '9876543210',
         role: 'admin',
         status: 'active',
@@ -17,10 +17,10 @@ export const initializeMockData = () => {
       },
       {
         id: '2',
-        name: 'John Manager',
-        username: 'prathamesh.tase',
+        name: 'Prathmesh Tare',
+        username: 'prathmesh.tare',
         password: 'Green@7581',
-        email: 'john@construction.com', 
+        email: 'prathmesh@greenearthspaces.com', 
         mobileNo: '9876543211',
         role: 'employee',
         status: 'active',
@@ -28,10 +28,10 @@ export const initializeMockData = () => {
       },
       {
         id: '3',
-        name: 'Sarah Employee',
+        name: 'Lavinia Reynolds',
         username: 'lavinia.reynolds',
         password: 'Green@7581',
-        email: 'sarah@construction.com',
+        email: 'lavinia@greenearthspaces.com',
         mobileNo: '9876543212',
         role: 'employee',
         status: 'active',
@@ -39,6 +39,7 @@ export const initializeMockData = () => {
       },
     ];
     localStorage.setItem('users', JSON.stringify(users));
+    console.log('Users initialized:', users); // Debug log
   }
 
   // Initialize leads if not exists

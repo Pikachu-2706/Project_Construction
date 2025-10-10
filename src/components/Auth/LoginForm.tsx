@@ -14,14 +14,20 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    
+    console.log('Form submission:', { username, password }); // Debug log
 
     try {
       const success = await login(username, password);
       if (!success) {
         setError('Invalid username or password');
+        console.log('Login failed for:', username); // Debug log
+      } else {
+        console.log('Login successful for:', username); // Debug log
       }
     } catch (err) {
       setError('Login failed. Please try again.');
+      console.error('Login error:', err); // Debug log
     } finally {
       setLoading(false);
     }
