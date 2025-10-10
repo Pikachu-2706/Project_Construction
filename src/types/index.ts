@@ -101,7 +101,7 @@ export type ContactType = 'Client' | 'Developer' | 'Individual Owner' | 'Broker'
 
 export interface InventoryItem {
   id: string;
-  type: 'corporate_building' | 'coworking_space' | 'warehouse' | 'retail_mall';
+  type: 'corporate_building' | 'coworking_space' | 'warehouse' | 'retail_mall' | 'managed_office';
   name: string;
   grade: 'A' | 'B' | 'C';
   developerOwnerName: string;
@@ -124,7 +124,6 @@ export interface InventoryItem {
   flooringSize?: string;
   canopy?: string;
   fireSprinklers?: string;
-  type: string;
   specification: string;
   status: 'Available' | 'Occupied' | 'Under Maintenance';
   rentPerSqft?: number;

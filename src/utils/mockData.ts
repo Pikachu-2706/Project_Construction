@@ -250,7 +250,6 @@ export const initializeMockData = () => {
         floor: '15th Floor',
         height: '12 feet',
         terrace: 'No',
-        type: 'Office Space',
         specification: 'Fully furnished office space with modern amenities',
         status: 'Available',
         rentPerSqft: 85,
