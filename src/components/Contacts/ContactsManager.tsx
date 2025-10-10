@@ -5,7 +5,6 @@ import DataTable from '../Common/DataTable';
 import Modal from '../Common/Modal';
 import { exportToCSV, downloadTemplate } from '../../utils/exportUtils';
 import { Plus, Upload, Download, Building2, Users, User, UserCheck, FileText, Edit, Trash2, Eye } from 'lucide-react';
-import Papa from 'papaparse';
 
 // Strongly typed user interface
 interface EmployeeUser {
@@ -313,36 +312,50 @@ const ContactsManager: React.FC = () => {
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        Papa.parse(file, {
-          header: true,
-          skipEmptyLines: true,
-          complete: (result) => {
-            try {
-              const importedContacts = (result.data as Partial<Contact>[]).map((row) => ({
-                id: Date.now().toString() + Math.random(),
-                type: activeTab,
-                ...row,
-              })) as Contact[];
-
-              if (user?.role === 'employee') {
-                importedContacts.forEach((contact) => {
-                  createPendingAction('create', 'contacts', contact, undefined, user);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const csvText = event.target?.result as string;
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            const importedContacts: Contact[] = [];
+            for (let i = 1; i < lines.length; i++) {
+              if (lines[i].trim()) {
+                const values = lines[i].split(',').map(v => v.trim());
+                const contact: Partial<Contact> = { type: activeTab };
+                
+                headers.forEach((header, index) => {
+                  if (values[index]) {
+                    (contact as any)[header] = values[index];
+                  }
                 });
-                alert(`${importedContacts.length} contacts sent to admin for approval.`);
-              } else {
-                const allContacts: Contact[] = JSON.parse(localStorage.getItem('contacts') || '[]');
-                const updatedContacts = [...allContacts, ...importedContacts];
-                localStorage.setItem('contacts', JSON.stringify(updatedContacts));
-                loadContacts();
+                
+                if (contact.firstName && contact.lastName) {
+                  importedContacts.push({
+                    id: Date.now().toString() + Math.random(),
+                    ...contact
+                  } as Contact);
+                }
               }
-            } catch (error) {
-              alert('Error parsing CSV file. Please ensure it follows the correct format.');
             }
-          },
-          error: (error) => {
-            alert(`Error parsing CSV: ${error.message}`);
+
+            if (user?.role === 'employee') {
+              importedContacts.forEach((contact) => {
+                createPendingAction('create', 'contacts', contact, undefined, user);
+              });
+              alert(`${importedContacts.length} contacts sent to admin for approval.`);
+            } else {
+              const allContacts: Contact[] = JSON.parse(localStorage.getItem('contacts') || '[]');
+              const updatedContacts = [...allContacts, ...importedContacts];
+              localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+              loadContacts();
+            }
+          } catch (error) {
+            alert('Error parsing CSV file. Please ensure it follows the correct format.');
           }
-        });
+        };
+        reader.readAsText(file);
       }
     };
     input.click();
